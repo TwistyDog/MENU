@@ -26,24 +26,33 @@ public class FooteMenuController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             currentIndex++;
-            UpdateVisual();
+            MoveMenu();
 
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             currentIndex--;
-            UpdateVisual();
+            MoveMenu();
         }
-    }
 
-    void UpdateVisual()
-    {
         currentIndex = Mathf.Clamp(currentIndex, 0, 4);
 
-        float targetX = -currentIndex * spacing;
+        optionsContainer.anchoredPosition =
+        Vector2.Lerp(
+            optionsContainer.anchoredPosition,
+            targetPos,
+            moveSpeed * Time.deltaTime
+        );
 
-        optionsContainer.DOAnchorPosX(targetX, 0.35f)
-            .SetEase(Ease.OutCubic);
+        
+    }
+
+    void MoveMenu()
+    {
+        targetPos = new Vector2(
+            -currentIndex * spacing,
+            optionsContainer.anchoredPosition.y
+        );
     }
 }
