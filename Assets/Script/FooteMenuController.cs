@@ -5,6 +5,10 @@ using DG.Tweening;
 public class FooteMenuController : MonoBehaviour
 {
     [SerializeField] RectTransform optionsContainer;
+    [SerializeField] private UnityEngine.UI.Button[] menuOptions;
+
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color selectedColor = Color.yellow;
 
     [SerializeField] float spacing = 400f;
     [SerializeField] float moveSpeed = 10f;
@@ -18,6 +22,7 @@ public class FooteMenuController : MonoBehaviour
     void Start()
     {
         targetPos = optionsContainer.anchoredPosition;
+        UpdatedSelectionVisual();
     }
 
     // Update is called once per frame
@@ -26,24 +31,51 @@ public class FooteMenuController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             currentIndex++;
-            UpdateVisual();
+            MoveMenu();
+            UpdatedSelectionVisual();
 
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             currentIndex--;
-            UpdateVisual();
+            MoveMenu();
+            UpdatedSelectionVisual();
         }
-    }
 
-    void UpdateVisual()
-    {
         currentIndex = Mathf.Clamp(currentIndex, 0, 4);
 
-        float targetX = -currentIndex * spacing;
+        optionsContainer.anchoredPosition =
+        Vector2.Lerp(
+            optionsContainer.anchoredPosition,
+            targetPos,
+            moveSpeed * Time.deltaTime
+        );
 
-        optionsContainer.DOAnchorPosX(targetX, 0.35f)
-            .SetEase(Ease.OutCubic);
+        
+    }
+
+    void MoveMenu()
+    {
+        targetPos = new Vector2(
+            -currentIndex * spacing,
+            optionsContainer.anchoredPosition.y
+        );
+    }
+
+    void UpdatedSelectionVisual()
+    {
+        for(int i = 0; i < menuOptions.Length; i++)
+        {
+            bool selected = i == currentIndex;
+
+            menuOptions[i].image.color =
+            selected ? selectedColor : normalColor;
+
+            menuOptions[i].transform.DOScale(
+                selected ? 1.15f : 1f,
+                0.2f
+            );
+        }
     }
 }
